@@ -3,24 +3,42 @@
  * Template Name: Company
  */
 get_header(); 
-$logo = get_field('company_logo');
-$name = get_field('company_name');
-$desc = get_field('company_description');
 $recommended = get_field('recommended');
 $tag = get_field('company_symbol');
 $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+
+
+// creating the key and checking if the data is already available in cache
+$profile_cache_key = 'profile'. $tag;
+
+$profile_response = get_transient( $profile_cache_key );
+
+if ( false === $profile_response ) {
+     $profile_response = make_data_request($tag, 'profile/');
+    set_transient( $profile_cache_key, $profile_response );
+} 
+
+$companyName =  $profile_response[0]->companyName;
+$description =  $profile_response[0]->description;
+$image =  $profile_response[0]->image;
 
 ?>
 <section id="company">
     <div class="container">
         <div class="content text-center">
             <div class="desc col">
-                <h1 class="title"><?php echo $name; ?></h1>
-                <p><?php echo $desc; ?></p>
+                <?php if(!empty($companyName)): ?>
+                    <h1 class="title"><?php echo $companyName; ?></h1>
+                <?php endif; ?>
+                <?php if(!empty($description)): ?>
+                    <p><?php echo $description; ?></p>
+                <?php endif; ?>
             </div>
-            <div class="logo col text-center">
-                <img src="<?php echo $logo['url'];?>" alt="<?php echo $logo['alt'];?>" />
-            </div>
+            <?php if(!empty($image)): ?>
+                <div class="logo col text-center">
+                    <img src="<?php echo $image;?>" alt="<?php echo $companyName ;?>  logo " />
+                </div>
+            <?php endif; ?>
 
         </div>
         <?php echo do_shortcode( '[company name="'.$tag.'"]' ); ?>
@@ -57,138 +75,4 @@ $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
     
 </section>
 
-<?php 
-if( function_exists('acf_add_local_field_group') ):
-
-acf_add_local_field_group(array(
-    'key' => 'group_5fa8a3ea5eb70',
-    'title' => 'Company page info',
-    'fields' => array(
-        array(
-            'key' => 'field_5fa8a411eec3a',
-            'label' => 'Company logo',
-            'name' => 'company_logo',
-            'type' => 'image',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => array(
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ),
-            'return_format' => 'array',
-            'preview_size' => 'medium',
-            'library' => 'all',
-            'min_width' => '',
-            'min_height' => '',
-            'min_size' => '',
-            'max_width' => '',
-            'max_height' => '',
-            'max_size' => '',
-            'mime_types' => '',
-        ),
-        array(
-            'key' => 'field_5fa8a42feec3b',
-            'label' => 'Company Name',
-            'name' => 'company_name',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => array(
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ),
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ),
-        array(
-            'key' => 'field_5fa8a43aeec3c',
-            'label' => 'company description',
-            'name' => 'company_description',
-            'type' => 'textarea',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => array(
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ),
-            'default_value' => '',
-            'placeholder' => '',
-            'maxlength' => '',
-            'rows' => '',
-            'new_lines' => '',
-        ),
-        array(
-            'key' => 'field_5fa8a468eec3d',
-            'label' => 'company symbol',
-            'name' => 'company_symbol',
-            'type' => 'text',
-            'instructions' => 'eg: enter SBUX for Starbucks',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => array(
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ),
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ),
-        array(
-            'key' => 'field_5fa8a495eec3e',
-            'label' => 'Recommended',
-            'name' => 'recommended',
-            'type' => 'checkbox',
-            'instructions' => 'if checked recommendation articles for this company will be displayed from the stock articles post type',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => array(
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ),
-            'choices' => array(
-                'true' => 'Show',
-                'false' => 'Don\'t show',
-            ),
-            'allow_custom' => 0,
-            'default_value' => array(
-            ),
-            'layout' => 'vertical',
-            'toggle' => 0,
-            'return_format' => 'value',
-            'save_custom' => 0,
-        ),
-    ),
-    'location' => array(
-        array(
-            array(
-                'param' => 'page_template',
-                'operator' => '==',
-                'value' => 'company.php',
-            ),
-        ),
-    ),
-    'menu_order' => 0,
-    'position' => 'normal',
-    'style' => 'default',
-    'label_placement' => 'top',
-    'instruction_placement' => 'label',
-    'hide_on_screen' => '',
-    'active' => true,
-    'description' => '',
-));
-
-endif;
- get_footer(); ?>
+<?php get_footer(); ?>

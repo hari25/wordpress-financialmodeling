@@ -23,7 +23,7 @@ get_header();
                                 }
                             }
                         ?>
-                        <a href="<?php echo get_the_permalink();?>">View Article<span> -></span></a><br/>
+                        <br/><a href="<?php echo get_the_permalink();?>">View Article<span> -></span></a><br/>
                     </div>
                 <?php endwhile; ?>
                 <nav class="pagination">

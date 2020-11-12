@@ -13,24 +13,6 @@
  // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-
-// function get_data($atts) {
-// 	$name = $atts['name'];
-//      $response = wp_remote_get ( 'https://financialmodelingprep.com/api/v3/quote/' . $name .'?apikey='. API_KEY, array ( 'sslverify' => false ) );
-//     if ( !is_wp_error ($response) ) {
-//         $body =  wp_remote_retrieve_body($response);
-//         $data = json_decode( $body );
-//         //print_r( $data);
-//         return '<ul>
-// 	        <li><span>Exchange:</span>' .  $data[0]->exchange . '</li>
-// 	        <li><span>Price Change:</span>' . $data[0]->change . '</li>
-//         </ul>';
-        
-//     }
-// }
-
-// add_shortcode('getdata', 'get_data');
-
 if(!class_exists('Stock_Data')){ //check if the class already exists
 class Stock_Data {
 
@@ -78,11 +60,29 @@ class Stock_Data {
 
     //this function makes two api calls since we cannot get all the required from one
     public function display_company_information($content ) 
-    {
+    {   
+
+
+        $quote_cache_key = 'quote'. $content['name'];
+        $quote_response = get_transient( $quote_cache_key );
+
+        if ( false === $quote_response ) {
+             $quote_response = $this->make_data_request($content, 'quote/');
+            set_transient( $quote_cache_key, $quote_response );
+        } 
+
+        $profile_cache_key = 'profile'. $content['name'];
+
+        $profile_response = get_transient( $profile_cache_key );
+
+        if ( false === $profile_response ) {
+             $profile_response = $this->make_data_request($content, 'profile/');
+            set_transient( $profile_cache_key, $profile_response );
+        } 
        
         // FIRST CALL
 
-        if ( null == ( $json_response = $this->make_data_request($content, 'quote/') ) || null == ( $json_response_two = $this->make_data_request($content, 'profile/') ) ){
+        if ( null == $quote_response || null == $profile_response ){
                 // ...display a message that the request failed
                 
                  $html = 'There was a problem communicating with the Financial Data API..';
@@ -92,8 +92,8 @@ class Stock_Data {
             } 
            
             else{
-                $arrayOne = json_decode(json_encode($json_response), true);
-                $arrayTwo = json_decode(json_encode($json_response_two), true);
+                $arrayOne = json_decode(json_encode($quote_response), true);
+                $arrayTwo = json_decode(json_encode($profile_response), true);
                 $result = array();
                 foreach($arrayOne as $key=>$val){ // Loop though one array
                     $val2 = $arrayTwo[$key]; // Get the values from the other array
@@ -130,8 +130,15 @@ class Stock_Data {
     }
     public function display_data_information( $content ) {
         
-            
-            if ( null == ( $json_response = $this->make_data_request($content) ) ) {
+            $quote_cache_key = 'quote'. $content['name'];
+            $quote_response = get_transient( $quote_cache_key );
+
+            if ( false === $quote_response ) {
+                 $quote_response = $this->make_data_request($content, 'quote/');
+                set_transient( $quote_cache_key, $quote_response );
+            } 
+
+            if ( null == $quote_response ) {
  
                 // ...display a message that the request failed
                 $html = '
@@ -144,9 +151,9 @@ class Stock_Data {
             } else {
  
                 $html = '<ul>
-					        <li><span>Exchange:</span>' .  $json_response[0]->exchange . '</li>
-					        <li><span>Price Change:</span>' . $json_response[0]->change . '</li>
-					        <li><span>Price Change:</span>' . $json_response[0]->previousClose . '</li>
+					        <li><span>Exchange:</span>' .  $quote_response[0]->exchange . '</li>
+					        <li><span>Price Change:</span>' . $quote_response[0]->change . '</li>
+					        <li><span>Price Change:</span>' . $quote_response[0]->previousClose . '</li>
 				        </ul>';
  
             } // end if/else
@@ -159,9 +166,17 @@ class Stock_Data {
     } // end display_data_information
 
     public function display_symbol_information( $content ) {
+
+            $quote_cache_key = 'quote'. $content['name'];
+            $quote_response = get_transient( $quote_cache_key );
+
+            if ( false === $quote_response ) {
+                 $quote_response = $this->make_data_request($content, 'quote/');
+                set_transient( $quote_cache_key, $quote_response );
+            } 
         
             // ...attempt to make a response to API
-            if ( null == ( $json_response = $this->make_data_request($content, 'quote/') ) ) {
+            if ( null == $quote_response ) {
  
                 // ...display a message that the request failed
                 $html = '
@@ -173,11 +188,11 @@ class Stock_Data {
                 // ...otherwise, read the information provided by API
             } else {
                 
-                $html = '
-                           ( ' .  $json_response[0]->exchange . ' : ' . $json_response[0]->symbol .')
+                $html = '<span>
+                           ( ' .  $quote_response[0]->exchange . ' : ' . $quote_response[0]->symbol .')
                             
-                        ';
-                 $html .= '</div> <!-- /#demo-content -->';
+                        </span>';
+                 
  
             } // end if/else
  
@@ -190,9 +205,18 @@ class Stock_Data {
 
     //this gets the company profile
     public function display_profile_information( $content ) {
+
+            $profile_cache_key = 'profile'. $content['name'];
+
+            $profile_response = get_transient( $profile_cache_key );
+
+            if ( false === $profile_response ) {
+                 $profile_response = $this->make_data_request($content, 'profile/');
+                set_transient( $profile_cache_key, $profile_response );
+            } 
         
             // ...attempt to make a response to API
-            if ( null == ( $json_response = $this->make_data_request($content, 'profile/') ) ) {
+            if ( null == $profile_response ) {
  
                 // ...display a message that the request failed
                 $html = '
@@ -205,10 +229,10 @@ class Stock_Data {
             } else {
                 
                 $html = '
-                           <img src=" ' .  $json_response[0]->image . ' "/> <br/>' .  $json_response[0]->companyName .' <br/>' .  $json_response[0]->exchange .'<br/>' .  $json_response[0]->description .'<br/>' .  $json_response[0]->industry .'<br/>' .  $json_response[0]->sector .'<br/>' .  $json_response[0]->ceo .'<br/>' .  $json_response[0]->website .'
+                           <img src=" ' .  $profile_response[0]->image . ' "/> <br/><span>Name: </span>' .  $profile_response[0]->companyName .' <br/><span>Exchange: </span>' .  $profile_response[0]->exchange .'<br/><span>Description: </span>' .  $profile_response[0]->description .'<br/><span>Industry: </span>' .  $profile_response[0]->industry .'<br/><span>Sector: </span>' .  $profile_response[0]->sector .'<br/><span>CEO: </span>' .  $profile_response[0]->ceo .'<br/><span>Website url: </span>' .  $profile_response[0]->website .'
                             
                         ';
-                 $html .= '</div> <!-- /#demo-content -->';
+                 $html .= '</div>';
  
             } // end if/else
  
@@ -224,15 +248,14 @@ class Stock_Data {
      *
      * @access public
      * @param  $atts  The username for the  feed we're attempting to retrieve
-     * @return $quote  endpoint of the API
+     * @return $param  endpoint parameter of the API
      */
-    public function make_data_request( $atts, $quote ) {
+    public function make_data_request( $atts, $param ) {
     	$name = strtoupper($atts['name']);
-     	$response = wp_remote_get ( $this->apiUrl .$quote . $name .'?apikey='. API_KEY, array ( 'sslverify' => false ) );
+     	$response = wp_remote_get ( $this->apiUrl .$param . $name .'?apikey='. API_KEY, array ( 'sslverify' => false ) );
 	    if (!is_wp_error ($response) ) {
 	        $body =  wp_remote_retrieve_body($response);
 	        $data = json_decode( $body );
-	        //print_r( $data);
 	        return $data;
 	        
 	    }
@@ -244,6 +267,14 @@ class Stock_Data {
  
  
 } // end class
+
+// delete transient on plugin deactivation. Or we can use Transients Manager plugin
+function stock_data_on_deactivation() {
+    if(!curret_user_can('activate_plugins')) return;
+    delete_transient( 'quote' );
+}
+
+register_deactivation_hook( __FILE__, 'stock_data_on_deactivation' );
  
 // Trigger the plugin
 Stock_Data::get_instance();

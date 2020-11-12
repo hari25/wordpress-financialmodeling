@@ -1,121 +1,13 @@
 @import 'company.css';
+@import 'common.css';
+@import 'footer.css';
+@import 'header.css';
+@import 'menu.css';
+@import 'post-types.css';
 
 body{
 	background-color: #edeeee !important;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
 }
-.menu-primary-menu-container ul{
-	list-style: none;
-	display:flex;
-	flex-direction: row;
-	justify-content: space-between;
-}
 
-.menu-primary-menu-container ul li{
-	padding:10px;
-
-}
-.menu-primary-menu-container ul li.current-menu-item{
-	text-decoration: underline;
-
-}
-.menu-primary-menu-container ul li:hover{
-	background-color: #fc3;
-    color: #000;
-
-}
-
-.menu-primary-menu-container ul li a{
-	color: #fff;
-    font-weight: 300;
-    font-size: 80%;
-    opacity: .7;
-}
-
-.header{
-	background-image: linear-gradient(180deg,#000,#222);
-}
-
-
-/*common styles*/
-.col{
-	flex: 1;
-}
-.text-center{
-	text-align: center;
-}
-.title{
-	color: #006BA6;
-	font-size: 20px;
-    line-height: 1.3;
-    margin-bottom: 15px;
-}
-
-.topic{
-	display: inline-block;
-    position: relative;
-    margin-bottom: 10px;
-    color: #1c1d20;
-    font-size: 2rem;
-    line-height: 28px;
-    padding-bottom: 30px;
-}
-
-.topic:after{
-	content: "";
-    position: absolute;
-    width: 100%;
-    height: 3px;
-    left: 0;
-    bottom: 20px;
-    background: #1c1d20;
-}
-.black{
-	color: #1c1d20;
-}
-
-
-
-
-/*footer styles*/
-.site-footer{
-	display: block;
-    height: auto;
-    background-color: #37393B;
-    color: #fff;
-   margin-top: 50px;
-}
-.site-footer .site-info{
-	padding: 20px 0px;
-}
-.site-footer .site-info a{
-	color:white;
-	cursor:pointer;
-	display:inline-block;
-	text-transform: capitalize;
-}
-
-/*news article styles*/
-#news-archive .news-article-info, #stock-recom-archive .stock-article-info{
-	position: relative;
-    display: block;
-    clear: both;
-    padding: 20px;
-    margin-bottom: 42px;
-    border-radius: 4px;
-    background: white;
-    box-shadow: 0 2px 8px 0 #DCDCDD;
-    color: #1c1d20;
-}
-
-#news-archive .news-article-info a, #stock-recom-archive .stock-article-info a{
-	color: #AC145A;
-	cursor: pointer;
-	text-decoration: none;
-	transition: 0.3s ease all 0.2s;
-}
-
-#news-archive .news-article-info a:hover span, #stock-recom-archive .stock-article-info a:hover span{
-	padding-left: 10px;
-}

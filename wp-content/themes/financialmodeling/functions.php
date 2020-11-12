@@ -20,104 +20,17 @@ function my_enqueue_styles() {
         wp_enqueue_script('bootstrap-js', get_template_directory_uri() . '/assets/vendor/bootstrap/js/bootstrap.min.js', array('jquery'), false );  
 }
 
-// Flush rewrite rules for custom post types
-add_action( 'after_switch_theme', 'fm_flush_rewrite_rules' );
+// =========================================
+// CUSTOM POST TYPE SETUP
+// =========================================
+include_once( 'settings/custom-post-type.php' );
 
-// Flush your rewrite rules
-function fm_flush_rewrite_rules() {
-	flush_rewrite_rules();
-}
+// =========================================
+// ACF FIELDS SETUP
+// =========================================
+include_once( 'settings/acf-fields.php' );
 
-function financial_modeling_cpt_init() {
-
-	// =========================================
-	//   ADD News Article CUSTOM POST TYPE 
-	// =========================================
-
-    register_post_type( 'news_articles',
-        array(
-            'labels' => array(
-                'name' => __( 'NewsArticles' ),
-                'singular_name' => __( 'News Article' ),
-                'menu_name'           => __( 'NewsArticles', THEME_TD ),
-				'parent_item_colon'   => __( 'Parent News Article', THEME_TD ),
-				'all_items'           => __( 'All NewsArticles', THEME_TD ),
-				'view_item'           => __( 'View NewsArticles', THEME_TD ),
-				'add_new_item'        => __( 'Add News Article', THEME_TD ),
-				'add_new'             => __( 'Add New', THEME_TD ),
-				'edit_item'           => __( 'Edit News Article', THEME_TD ),
-				'update_item'         => __( 'Update News Article', THEME_TD ),
-				'search_items'        => __( 'Search News Article', THEME_TD ),
-				'not_found'           => __( 'Not Found', THEME_TD ),
-				'not_found_in_trash'  => __( 'Not found in Trash', THEME_TD ),
-            ),
-            'public'              => true,
-			'show_ui'             => true,
-			'show_in_menu'        => true,
-			'show_in_nav_menus'   => true,
-			'show_in_admin_bar'   => true,
-			'menu_position'       => 6,
-			'menu_icon'			  => 'dashicons-hammer',
-            'has_archive'         => true,
-            'rewrite'             => true,
-			'show_in_rest'		  => true,
-			'supports'            => array( 'title', 'page-attributes', 'editor' ),
-			'taxonomies' => array('category', 'post_tag'), // this is IMPORTANT
-			'hierarchical'        => false,
-			'can_export'          => true,
-			'capability_type'     => 'post',
-			'rewrite' => [
-				'slug'	=>	'news-article',
-				'with_front' => false,
-			],
-        )
-    );
-
-    // =========================================
-	//   ADD Stock Recommendation Article CUSTOM POST TYPE 
-	// =========================================
-    register_post_type( 'stock_articles',
-        array(
-            'labels' => array(
-                'name' => __( 'stockArticles' ),
-                'singular_name' => __( 'Stock Recommendation' ),
-                'menu_name'           => __( 'stockArticles', THEME_TD ),
-				'parent_item_colon'   => __( 'Parent stock Article', THEME_TD ),
-				'all_items'           => __( 'All stockArticles', THEME_TD ),
-				'view_item'           => __( 'View stockArticles', THEME_TD ),
-				'add_new_item'        => __( 'Add stock Article', THEME_TD ),
-				'add_new'             => __( 'Add New', THEME_TD ),
-				'edit_item'           => __( 'Edit stock Article', THEME_TD ),
-				'update_item'         => __( 'Update stock Article', THEME_TD ),
-				'search_items'        => __( 'Search stock Article', THEME_TD ),
-				'not_found'           => __( 'Not Found', THEME_TD ),
-				'not_found_in_trash'  => __( 'Not found in Trash', THEME_TD ),
-            ),
-            'public'              => true,
-			'show_ui'             => true,
-			'show_in_menu'        => true,
-			'show_in_nav_menus'   => true,
-			'show_in_admin_bar'   => true,
-			'menu_position'       => 6,
-			'menu_icon'			  => 'dashicons-hammer',
-            'has_archive'         => true,
-            'rewrite'             => true,
-			'show_in_rest'		  => true,
-			'supports'            => array( 'title', 'page-attributes', 'editor' ),
-			'taxonomies' => array('category', 'post_tag'), // this is IMPORTANT
-			'hierarchical'        => false,
-			'can_export'          => true,
-			'capability_type'     => 'post',
-			'rewrite' => [
-				'slug'	=>	'stock-article',
-				'with_front' => false,
-			],
-        )
-    );
-
-}
-// Hooking up our function to theme setup
-add_action( 'init', 'financial_modeling_cpt_init', 0 );
+//pagination for post types
 
 function pagination_bar( $custom_query ) {
 
@@ -136,12 +49,14 @@ function pagination_bar( $custom_query ) {
     }
 }
 
+//Registering a Header menu
+
 function register_my_menu() {
   register_nav_menu('header-menu',__( 'Header Menu' ));
 }
 add_action( 'init', 'register_my_menu' );
 
-//use this function to display the related stock recommended posts of a company
+//use this function to display the related stock recommended posts or news articles of a company
 
 function get_custom_posts( $args ) {
 
@@ -162,20 +77,20 @@ function get_custom_posts( $args ) {
     wp_reset_postdata();
 }
 
-// =========================================
-//	INGEST MODULES
-// =========================================
-
-// Get a list of all the subdirectories in the Modules directory.
-$dirs = array_filter(glob(get_template_directory() . '/modules/*'), 'is_dir');
-
-foreach ( $dirs as $dir ) :
-	// Get the last directory name.
-	$moduleName = substr($dir, strrpos($dir, '/') + 1);
-	// The directory name should match the name of the initializing php file
-	$moduleInitFile = 'modules/' . $moduleName . '/' . $moduleName . '.php';
-	include_once($moduleInitFile);
-endforeach;
+//make api request
+function make_api_request( $tag, $param ) {
+	$name = strtoupper($tag);
+ 	$response = wp_remote_get ( $this->apiUrl .$param . $name .'?apikey='. API_KEY, array ( 'sslverify' => false ) );
+    if (!is_wp_error ($response) ) {
+        $body =  wp_remote_retrieve_body($response);
+        $data = json_decode( $body );
+        return $data;
+        
+    }
+    else{
+    	return null;
+    }
+} 
 
 
 ?>
