@@ -23,6 +23,8 @@ The themes comes with two custom post types "News Articles", "Stock Articles" an
 
 ```
 ![image](https://user-images.githubusercontent.com/22259868/98998304-29b03a00-24f3-11eb-9f41-a7c87309dc11.png)
+![image](https://user-images.githubusercontent.com/22259868/98998405-52d0ca80-24f3-11eb-9209-b3f4533a13f7.png)
+
 
 ### Installation
 Clone this repo:
