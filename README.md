@@ -20,7 +20,12 @@ This theme is designed to display stock data by consuming financialmodeling api'
 
 #### Built-in
 ```
-The themes comes with two custom post types "News Articles", "Stock Articles" and a template "Company" which is used to create Company pages. Any posts created under these post types can be assigned a stock ticker symbol using the short code [symbol name="SBUX"](sbux is the symbol for Starbucks) which would output as ( NASDAQ : SBUX) . Company template can be used to display related stock articles or news articles that are tagged with company symbol(SBUX) and then adding then adding it under the "company symbol" field while creating the page in the CMS.
+The themes comes with two custom post types "News Articles", "Stock Articles" and a template "Company" 
+which is used to create Company pages. Any posts created under these post types can be assigned a stock 
+ticker symbol using the short code [symbol name="SBUX"](sbux is the symbol for Starbucks) 
+which would output as ( NASDAQ : SBUX) . Company template can be used to display related 
+stock articles or news articles that are tagged with company symbol(SBUX) and then adding 
+then adding it under the "company symbol" field while creating the page in the CMS.
 
 ```
 ![image](https://user-images.githubusercontent.com/22259868/98998304-29b03a00-24f3-11eb-9f41-a7c87309dc11.png)
@@ -33,8 +38,11 @@ Clone this repo:
 https://github.com/hari25/wordpress-financialmodeling.git
 ```
 ```
-Or you can download the Archive folder which contains zip files of theme and plugins and can upload them directly using "Upload Theme" and "Upload Plugin" functionality from the CMS.
-Import financialmodeling.WordPress.2020-11-12.xml(Tools->Settings->import) file from the archive folder( https://github.com/hari25/wordpress-financialmodeling/tree/master/wp-content/archive) to get started with basic posts, pages and menus.
+Or you can download the Archive folder which contains zip files of theme and plugins and 
+can upload them directly using "Upload Theme" and "Upload Plugin" functionality from the CMS.
+Import financialmodeling.WordPress.2020-11-12.xml(Tools->Settings->import) file from 
+the archive folder( https://github.com/hari25/wordpress-financialmodeling/tree/master/wp-content/archive) 
+to get started with basic posts, pages and menus.
 
 Activate Advanced Custom Fields and FinancialModelingPrep plugins.
 ```
