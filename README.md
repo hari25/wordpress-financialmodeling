@@ -20,8 +20,8 @@ This theme is designed to display stock data by consuming financialmodeling api'
 #### Built-in
 ```
 The themes comes with two custom post types "News Articles", "Stock Articles" and a template "Company" which is used to creating Company page. Any posts created under these post types can be assigned a stock ticker symbol using the short code [symbol name="SBUX"](sbux is the symbol for Starbucks) which would output as ( NASDAQ : SBUX) . Company template can be used to display related stock articles or news articles that are tagged with company symbol(SBUX) and then adding the same symbol under "company symbol" while creating the page.
-![image](https://user-images.githubusercontent.com/22259868/98998065-c8886680-24f2-11eb-9625-10d6a11e9b5b.png)
-![image](https://user-images.githubusercontent.com/22259868/98998171-f1a8f700-24f2-11eb-82b1-6a3f85f01fca.png)
+![image](https://user-images.githubusercontent.com/22259868/98998304-29b03a00-24f3-11eb-9f41-a7c87309dc11.png)
+
 
 ```
 
