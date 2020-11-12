@@ -7,6 +7,10 @@
     padding: 0;
 }
 
+#company .info{
+	margin-bottom: 50px;
+}
+
 #company .news-articles{
 	margin-top:50px;
 }

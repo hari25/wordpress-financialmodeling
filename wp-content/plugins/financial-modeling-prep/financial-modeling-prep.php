@@ -270,8 +270,16 @@ class Stock_Data {
 
 // delete transient on plugin deactivation. Or we can use Transients Manager plugin
 function stock_data_on_deactivation() {
-    if(!curret_user_can('activate_plugins')) return;
-    delete_transient( 'quote' );
+    $user = wp_get_current_user();
+    $allowed_roles = array('administrator' );
+
+    if ( array_intersect( $allowed_roles, $user->roles ) ) {
+       // Stuff here for allowed roles
+        delete_transient( 'quote' );
+    }
+    else{
+        return;
+    }
 }
 
 register_deactivation_hook( __FILE__, 'stock_data_on_deactivation' );

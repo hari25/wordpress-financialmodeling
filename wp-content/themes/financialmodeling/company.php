@@ -57,17 +57,17 @@ $image =  $profile_response[0]->image;
             <?php endif; //recommended check?>
 
             <?php 
-                $news_args = array('post_type' => 'news_articles','posts_per_page' => 10, 'order' => 'DESC', 'tag' =>$tag, 'paged' => $paged ); 
-                $news_loop = new WP_Query($new_args); //we need this for pagination?>
+                $args = array('post_type' => 'news_articles','posts_per_page' => 10, 'order' => 'DESC', 'newstag' =>$tag, 'paged' => ( get_query_var('paged') ? get_query_var('paged') : 1) ); 
+                $loop = new WP_Query($args); //we need this for pagination?>
 
                 <!-- shows related news articles of the company -->
                 <div class="news-articles"> 
                     <h2 class="topic">Other Coverage</h2>
-                    <?php get_custom_posts($news_args); ?>
+                    <?php get_custom_posts($args); ?>
                 </div>
         </div>
         <nav class="pagination">
-            <?php pagination_bar( $news_loop ); ?>
+            <?php pagination_bar( $loop ); ?>
         </nav>
 
 
